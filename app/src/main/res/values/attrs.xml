@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WeatherView">
+        <attr name="weather" format="integer"/>
+        <attr name="rain_count" format="integer"/>
+    </declare-styleable>
+</resources>
