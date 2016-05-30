@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -29,6 +30,11 @@ public class WeatherView extends View implements SensorEventListener {
     public static final int RAIN = 3;
 
     private static final int LINE_COUNT = 50;
+    private static final int ANGLE = 360 / 9;
+    private static final int COLOR_ARRAY[] = {
+            0xFFFF5722, 0xFFFF6722, 0xFFFF7722, 0xFFFF8722,
+            0xFFFF9722, 0xFFFFA722, 0xFFFFB722, 0xFFFFC722,
+            0xFFFFD722};
 
     int mWeatherStyle;
 
@@ -36,6 +42,13 @@ public class WeatherView extends View implements SensorEventListener {
 
     int mWidth;
     int mHeight;
+
+    Path mSunshinePath;
+    int mSunshineX[];
+    int mSunshineY[];
+    float mSunshineStartAngle;
+    int mSunshineLenthX;
+    int mSunshineLenthY;
 
     float mRainCenterX;
     float mRainCenterY;
@@ -75,6 +88,14 @@ public class WeatherView extends View implements SensorEventListener {
         typedArray.recycle();
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        mSunshinePath = new Path();
+
+        mSunshineX = new int[9];
+        mSunshineY = new int[9];
+        mSunshineStartAngle = (float) (Math.random() * 360);
+        mSunshineLenthX = 0;
+        mSunshineLenthY = 0;
 
         mManger = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mManger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -117,8 +138,12 @@ public class WeatherView extends View implements SensorEventListener {
         float x = event.values[0];
         float y = event.values[1];
 
-        mRainCenterX -= (int)x;
-        mRainCenterY += (int)y;
+        mRainCenterX -= (int) x;
+        mRainCenterY += (int) y;
+
+        mSunshineLenthX -= (int) x;
+        mSunshineLenthY += (int) y;
+        mSunshineStartAngle += 0.1;
 
         postInvalidate();
     }
@@ -129,17 +154,67 @@ public class WeatherView extends View implements SensorEventListener {
     }
 
     private void drawSunshine(Canvas canvas) {
-        mPaint.setColor(0xFFFF9800);
+        mPaint.setColor(0xFF03A9F4);
         mPaint.setStrokeWidth(3);
+        mPaint.setStyle(Paint.Style.FILL);
         canvas.drawRect(0, 0, mWidth, mHeight, mPaint);
+
+        int pRadius = mWidth / 7 + mWidth / 10 * 8;
+        int pX = mWidth + mSunshineLenthX;
+        int pY = 0 + mSunshineLenthY;
+        float sAngle = mSunshineStartAngle;
+        int alpha = 60;
+
+        //9个9边形组成太阳效果
+        for (int i = 8; i > -1; i--) {
+            mPaint.setColor(COLOR_ARRAY[i]);
+            mPaint.setAlpha(alpha);
+            for (int j = 0; j < 9; j++) {
+                mSunshineX[j] = (int) (pX + pRadius * Math.cos((sAngle + ANGLE * j) * Math.PI / 180));
+                mSunshineY[j] = (int) (pY + pRadius * Math.sin((sAngle + ANGLE * j) * Math.PI / 180));
+                if (j == 0) {
+                    mSunshinePath.moveTo(mSunshineX[j], mSunshineY[j]);
+                } else {
+                    mSunshinePath.lineTo(mSunshineX[j], mSunshineY[j]);
+                }
+            }
+            canvas.drawPath(mSunshinePath, mPaint);
+            alpha += 195 / 10;
+            pRadius -= mWidth / 10;
+            sAngle += ANGLE / 2;
+            mSunshinePath.reset();
+        }
+
+        pRadius = mWidth / 7 + mWidth / 10 * 4;
+        mPaint.setAlpha(255);
+        mPaint.setColor(0xFFFFFFFF);
+        pX = (int) (pX - pRadius * Math.cos(60 * Math.PI / 180));
+        pY = (int) (pY + pRadius * Math.sin(60 * Math.PI / 180));
+        for (int i = 0; i < 3; i++) {
+            pRadius = mWidth / ((3 - i) * 10);
+            for (int j = 0; j < 6; j++) {
+                mSunshineX[j] = (int) (pX + pRadius * Math.cos((sAngle + 60 * j) * Math.PI / 180));
+                mSunshineY[j] = (int) (pY + pRadius * Math.sin((sAngle + 60 * j) * Math.PI / 180));
+                if (j == 0) {
+                    mSunshinePath.moveTo(mSunshineX[j], mSunshineY[j]);
+                } else {
+                    mSunshinePath.lineTo(mSunshineX[j], mSunshineY[j]);
+                }
+            }
+            pX -= mWidth / 5 * (i + 1) * Math.cos(60 * Math.PI / 180);
+            pY += mWidth / 5 * (i + 1) * Math.sin(60 * Math.PI / 180);
+            canvas.drawPath(mSunshinePath, mPaint);
+            sAngle += ANGLE / 2;
+            mSunshinePath.reset();
+        }
     }
 
     private void drawCloudSun(Canvas canvas) {
-
+        // TODO: 16/5/30
     }
 
     private void drawCloudy(Canvas canvas) {
-
+        // TODO: 16/5/30
     }
 
     private void drawRain(Canvas canvas) {
