@@ -9,8 +9,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFF00">
+        android:layout_height="match_parent">
 
         <!--android:theme="@style/AppTheme.AppBarOverlay"-->
         <RelativeLayout
@@ -19,7 +18,7 @@
 
             <sunpointed.lqy.weathertest.customviews.WeatherView
                 android:id="@+id/wv"
-                app:weather="0"
+                app:weather="1"
                 app:rain_count="100"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

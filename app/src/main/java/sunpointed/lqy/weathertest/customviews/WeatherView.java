@@ -40,8 +40,18 @@ public class WeatherView extends View implements SensorEventListener {
 
     Paint mPaint;
 
+    int mCloudSunX;
+    int mCloudSunY;
+    int mCloudSunRadius;
+
     int mWidth;
     int mHeight;
+
+    int mCloudX[];
+    int mCloudY[];
+    int mCloudRadius[];
+    int mCloudXRange;
+    int mCloudYRange;
 
     Path mSunshinePath;
     int mSunshineX[];
@@ -99,6 +109,12 @@ public class WeatherView extends View implements SensorEventListener {
         mSunshineLenthY = 0;
         mLightAngle = 60;
 
+        mCloudX = new int[8];
+        mCloudY = new int[8];
+        mCloudRadius = new int[8];
+        mCloudXRange = 0;
+        mCloudYRange = 0;
+
         mManger = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mManger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
@@ -127,12 +143,29 @@ public class WeatherView extends View implements SensorEventListener {
         mOthersY = mHeight / 3;
         mRainCenterX = mWidth / 2;
         mRainCenterY = mHeight / 2;
+
         for (int i = 0; i < mRainCount; i++) {
             mRainPositionX[i] = (int) (Math.random() * mWidth);
             mRainPositionY[i] = (int) (Math.random() * mHeight);
             mRainLineNow[i] = (int) (Math.random() * mRainCount);
             mRainLineCount[i] = LINE_COUNT + (int) (Math.random() * mRainCount);
         }
+
+        for (int i = 0; i < 8; i++) {
+            if (i == 7) {
+                mCloudX[i] = mWidth;
+                mCloudY[i] = mHeight / 6;
+                mCloudRadius[i] = mHeight / 7;
+            } else {
+                mCloudX[i] = (int) (Math.random() * mWidth);
+                mCloudY[i] = i % 2 == 0 ? -100 : -150;
+                mCloudRadius[i] = (int) (mWidth / 4 + Math.random() * mWidth / 3);
+            }
+        }
+
+        mCloudSunX = mWidth / 5;
+        mCloudSunY = mHeight / 7;
+        mCloudSunRadius = mHeight / 10;
     }
 
     @Override
@@ -140,10 +173,10 @@ public class WeatherView extends View implements SensorEventListener {
         float x = event.values[0];
         float y = event.values[1];
 
-        if(mWeatherStyle == RAIN) {
+        if (mWeatherStyle == RAIN) {
             mRainCenterX -= (int) x;
             mRainCenterY += (int) y;
-        }else if(mWeatherStyle == SUNSHINE) {
+        } else if (mWeatherStyle == SUNSHINE) {
             int pX = mSunshineLenthX;
             mSunshineLenthX -= (int) x;
             if (mSunshineLenthX < 0) {
@@ -158,11 +191,35 @@ public class WeatherView extends View implements SensorEventListener {
                 mSunshineLenthY = mHeight / 2;
             }
             mSunshineStartAngle += 0.2;
-            mLightAngle += (float)(mSunshineLenthX - pX)/mWidth * 60;
-        }else if(mWeatherStyle == CLOUD_SUN){
+            mLightAngle += (float) (mSunshineLenthX - pX) / mWidth * 60;
+        } else if (mWeatherStyle == CLOUDY || mWeatherStyle == CLOUD_SUN) {
+            mCloudXRange -= (int) x;
+            if (mCloudXRange < -100) {
+                mCloudXRange = -100;
+            } else if (mCloudXRange > 100) {
+                mCloudXRange = 100;
+            }
 
-        }else if(mWeatherStyle == CLOUDY){
+            mCloudYRange += (int) y;
+            if (mCloudYRange < -200) {
+                mCloudYRange = -200;
+            } else if (mCloudYRange > mHeight / 4) {
+                mCloudYRange = mHeight / 4;
+            }
 
+            if (mCloudXRange > -100 && mCloudXRange < 100) {
+                for (int i = 0; i < 8; i++) {
+                    mCloudX[i] -= (int) x;
+                }
+                mCloudSunX -= (int) x;
+            }
+
+            if (mCloudYRange > -200 && mCloudYRange < mHeight / 4) {
+                for (int i = 0; i < 8; i++) {
+                    mCloudY[i] += (int) y;
+                }
+                mCloudSunY += (int) y;
+            }
         }
 
         postInvalidate();
@@ -230,11 +287,42 @@ public class WeatherView extends View implements SensorEventListener {
     }
 
     private void drawCloudSun(Canvas canvas) {
-        // TODO: 16/5/30
+        mPaint.setColor(0xFF00BCD4);
+        mPaint.setStrokeWidth(3);
+        mPaint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(0, 0, mWidth, mHeight, mPaint);
+
+        int alpha = 120;
+
+        // 8个圆组成云层
+        for (int i = 7; i > -1; i--) {
+            mPaint.setColor(0xFFFFFFFF);
+            mPaint.setAlpha(alpha);
+            canvas.drawCircle(mCloudX[i], mCloudY[i], mCloudRadius[i], mPaint);
+            alpha = i % 2 == 0 ? 120 : 150;
+            if(i == 2){
+                mPaint.setAlpha(150);
+                mPaint.setColor(0xFFFFEB3B);
+                canvas.drawCircle(mCloudSunX, mCloudSunY, mCloudSunRadius, mPaint);
+            }
+        }
     }
 
     private void drawCloudy(Canvas canvas) {
-        // TODO: 16/5/30
+        mPaint.setColor(0xFF8DB6CD);
+        mPaint.setStrokeWidth(3);
+        mPaint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(0, 0, mWidth, mHeight, mPaint);
+
+        int alpha = 100;
+
+        // 8个圆组成云层
+        for (int i = 7; i > -1; i--) {
+            mPaint.setColor(i % 2 == 0 ? 0xFF778899 : 0xFFFFFFFF);
+            mPaint.setAlpha(alpha);
+            canvas.drawCircle(mCloudX[i], mCloudY[i], mCloudRadius[i], mPaint);
+            alpha = 1 % 2 == 0 ? 70 : 100;
+        }
     }
 
     private void drawRain(Canvas canvas) {
