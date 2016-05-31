@@ -49,6 +49,7 @@ public class WeatherView extends View implements SensorEventListener {
     float mSunshineStartAngle;
     int mSunshineLenthX;
     int mSunshineLenthY;
+    int mLightAngle;
 
     float mRainCenterX;
     float mRainCenterY;
@@ -96,6 +97,7 @@ public class WeatherView extends View implements SensorEventListener {
         mSunshineStartAngle = (float) (Math.random() * 360);
         mSunshineLenthX = 0;
         mSunshineLenthY = 0;
+        mLightAngle = 60;
 
         mManger = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mManger.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -138,12 +140,30 @@ public class WeatherView extends View implements SensorEventListener {
         float x = event.values[0];
         float y = event.values[1];
 
-        mRainCenterX -= (int) x;
-        mRainCenterY += (int) y;
+        if(mWeatherStyle == RAIN) {
+            mRainCenterX -= (int) x;
+            mRainCenterY += (int) y;
+        }else if(mWeatherStyle == SUNSHINE) {
+            int pX = mSunshineLenthX;
+            mSunshineLenthX -= (int) x;
+            if (mSunshineLenthX < 0) {
+                mSunshineLenthX = 0;
+            } else if (mSunshineLenthX > mWidth) {
+                mSunshineLenthX = mWidth;
+            }
+            mSunshineLenthY += (int) y;
+            if (mSunshineLenthY < 0) {
+                mSunshineLenthY = 0;
+            } else if (mSunshineLenthY > mHeight / 2) {
+                mSunshineLenthY = mHeight / 2;
+            }
+            mSunshineStartAngle += 0.2;
+            mLightAngle += (float)(mSunshineLenthX - pX)/mWidth * 60;
+        }else if(mWeatherStyle == CLOUD_SUN){
 
-        mSunshineLenthX -= (int) x;
-        mSunshineLenthY += (int) y;
-        mSunshineStartAngle += 0.1;
+        }else if(mWeatherStyle == CLOUDY){
+
+        }
 
         postInvalidate();
     }
@@ -188,21 +208,21 @@ public class WeatherView extends View implements SensorEventListener {
         pRadius = mWidth / 7 + mWidth / 10 * 4;
         mPaint.setAlpha(255);
         mPaint.setColor(0xFFFFFFFF);
-        pX = (int) (pX - pRadius * Math.cos(60 * Math.PI / 180));
-        pY = (int) (pY + pRadius * Math.sin(60 * Math.PI / 180));
+        pX = (int) (pX - pRadius * Math.cos(mLightAngle * Math.PI / 180));
+        pY = (int) (pY + pRadius * Math.sin(mLightAngle * Math.PI / 180));
         for (int i = 0; i < 3; i++) {
             pRadius = mWidth / ((3 - i) * 10);
             for (int j = 0; j < 6; j++) {
-                mSunshineX[j] = (int) (pX + pRadius * Math.cos((sAngle + 60 * j) * Math.PI / 180));
-                mSunshineY[j] = (int) (pY + pRadius * Math.sin((sAngle + 60 * j) * Math.PI / 180));
+                mSunshineX[j] = (int) (pX + pRadius * Math.cos((sAngle + mLightAngle * j) * Math.PI / 180));
+                mSunshineY[j] = (int) (pY + pRadius * Math.sin((sAngle + mLightAngle * j) * Math.PI / 180));
                 if (j == 0) {
                     mSunshinePath.moveTo(mSunshineX[j], mSunshineY[j]);
                 } else {
                     mSunshinePath.lineTo(mSunshineX[j], mSunshineY[j]);
                 }
             }
-            pX -= mWidth / 5 * (i + 1) * Math.cos(60 * Math.PI / 180);
-            pY += mWidth / 5 * (i + 1) * Math.sin(60 * Math.PI / 180);
+            pX -= mWidth / 5 * (i + 1) * Math.cos(mLightAngle * Math.PI / 180);
+            pY += mWidth / 5 * (i + 1) * Math.sin(mLightAngle * Math.PI / 180);
             canvas.drawPath(mSunshinePath, mPaint);
             sAngle += ANGLE / 2;
             mSunshinePath.reset();
