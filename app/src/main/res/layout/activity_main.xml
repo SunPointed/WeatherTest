@@ -18,17 +18,37 @@
 
             <sunpointed.lqy.weathertest.customviews.WeatherView
                 android:id="@+id/wv"
-                app:weather="1"
+                app:weather="3"
                 app:rain_count="100"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="#00FFFFFF"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                android:layout_height="match_parent"
+                android:background="#00FFFFFF">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="#00FFFFFF"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#00FFFFFF">
+
+                </ScrollView>
+            </RelativeLayout>
+
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/toolbar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="?attr/actionBarSize"-->
+                <!--android:background="#00FFFFFF"-->
+                <!--app:popupTheme="@style/AppTheme.PopupOverlay" />-->
 
             <!--?attr/colorPrimary-->
 

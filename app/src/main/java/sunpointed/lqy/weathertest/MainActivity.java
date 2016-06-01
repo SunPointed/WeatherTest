@@ -5,15 +5,32 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.gson.Gson;
+import com.squareup.okhttp.ResponseBody;
+
+import java.io.IOException;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import sunpointed.lqy.weathertest.Beans.WeatherDataBean;
+import sunpointed.lqy.weathertest.Utils.NetUtils;
 import sunpointed.lqy.weathertest.customviews.WeatherView;
 
 public class MainActivity extends AppCompatActivity {
 
+//    key: dc4180935056e7aa20b0f4d66efce8a9 name: SunPointed
+
     WeatherView mWeatherView;
+    int mWeatherStyle;
+
+    WeatherDataBean mBean;
+    Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,15 +40,28 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mWeatherView = (WeatherView) findViewById(R.id.wv);
+        mWeatherStyle = 3;
+        gson = new Gson();
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        Call<ResponseBody> call = NetUtils.cityService.getInfo("chengdu,CN", NetUtils.APKID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Response<ResponseBody> response) {
+                try {
+                    String data = response.body().string();
+                    mBean = gson.fromJson(data, WeatherDataBean.class);
+                    Log.i("lqy",data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+
     }
 
     @Override
@@ -50,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            mWeatherStyle = (mWeatherStyle + 1) % 4;
+            mWeatherView.setWeatherStyle(mWeatherStyle);
             return true;
         }
 
