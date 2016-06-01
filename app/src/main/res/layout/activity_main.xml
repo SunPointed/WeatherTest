@@ -7,106 +7,80 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--android:theme="@style/AppTheme.AppBarOverlay"-->
-        <RelativeLayout
+        <sunpointed.lqy.weathertest.customviews.WeatherView
+            android:id="@+id/wv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:rain_count="100"
+            app:weather="3" />
 
-            <sunpointed.lqy.weathertest.customviews.WeatherView
-                android:id="@+id/wv"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#00FFFFFF"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:background="#00FF00FF">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:rain_count="100"
-                app:weather="3" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#00FFFFFF">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="#00FFFFFF"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+                    android:layout_height="400dp" />
 
-                <ScrollView
+                <TextView
+                    android:id="@+id/tv_weather_big"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="27°"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="70sp" />
+
+                <TextView
+                    android:id="@+id/tv_weather_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="大雨  30°/21°C"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="20sp" />
+
+                <sunpointed.lqy.weathertest.customviews.WeatherShowView
+                    android:id="@+id/wsv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#00FFFFFF">
+                    android:layout_height="300dp"
+                    android:layout_marginTop="20dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                <sunpointed.lqy.weathertest.customviews.AirQualityView
+                    android:id="@+id/aqv"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="20dp" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="400dp" />
+                <sunpointed.lqy.weathertest.customviews.SuggestView
+                    android:id="@+id/sv"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="20dp" />
 
-                        <RelativeLayout
-                            android:layout_marginLeft="10dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical">
+            </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/tv_weather_big"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="27°"
-                                android:textColor="#FFFFFFFF"
-                                android:textSize="70sp" />
-
-                            <TextView
-                                android:id="@+id/tv_weather_small"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/tv_weather_big"
-                                android:text="大雨  30°/21°C"
-                                android:textColor="#FFFFFFFF"
-                                android:textSize="20sp" />
-
-                            <sunpointed.lqy.weathertest.customviews.WeatherShowView
-                                android:layout_width="match_parent"
-                                android:layout_height="300dp"
-                                android:layout_alignParentTop="true"
-                                android:layout_alignParentRight="true"
-                                android:layout_alignParentEnd="true" />
-
-
-                        </RelativeLayout>
-
-                        <sunpointed.lqy.weathertest.customviews.AirQualityView
-                            android:layout_width="match_parent"
-                            android:layout_height="80dp" />
-                        
-                        <sunpointed.lqy.weathertest.customviews.SuggestView
-                            android:layout_width="match_parent"
-                            android:layout_height="300dp" />
-
-                    </LinearLayout>
-
-                </ScrollView>
-            </RelativeLayout>
-
-            <!--<android.support.v7.widget.Toolbar-->
-            <!--android:id="@+id/toolbar"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?attr/actionBarSize"-->
-            <!--android:background="#00FFFFFF"-->
-            <!--app:popupTheme="@style/AppTheme.PopupOverlay" />-->
-
-            <!--?attr/colorPrimary-->
-
-        </RelativeLayout>
-
-    </android.support.design.widget.AppBarLayout>
+        </ScrollView>
+    </RelativeLayout>
 
     <!--<include layout="@layout/content_main" />-->
 
