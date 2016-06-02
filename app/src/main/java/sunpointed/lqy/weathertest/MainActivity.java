@@ -16,12 +16,15 @@ import com.google.gson.Gson;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import sunpointed.lqy.weathertest.Beans.WeatherDataBean;
+import sunpointed.lqy.weathertest.Beans.WeatherShowBean;
 import sunpointed.lqy.weathertest.Utils.NetUtils;
+import sunpointed.lqy.weathertest.customviews.WeatherShowView;
 import sunpointed.lqy.weathertest.customviews.WeatherView;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     int mWeatherStyle;
 
     ScrollView mScrollView;
+    WeatherShowView mWeatherShowView;
 
     WeatherDataBean mBean;
     Gson gson;
@@ -43,7 +47,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ArrayList<WeatherShowBean> arrayList = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            WeatherShowBean bean = new WeatherShowBean();
+            bean.date = "6月" + i;
+            bean.day = "星期" + i;
+            bean.weather = i % 4;
+            bean.high = (int) (20 + Math.random() * 10);
+            bean.low = (int) (5 + Math.random() * 10);
+            arrayList.add(bean);
+        }
+
         mScrollView = (ScrollView) findViewById(R.id.scroll_view);
+        mWeatherShowView = (WeatherShowView) findViewById(R.id.wsv);
+        mWeatherShowView.setShowList(arrayList);
 
         mWeatherView = (WeatherView) findViewById(R.id.wv);
         mWeatherStyle = 3;
@@ -56,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     String data = response.body().string();
                     mBean = gson.fromJson(data, WeatherDataBean.class);
-                    Log.i("lqy",data);
+                    Log.i("lqy", data);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
