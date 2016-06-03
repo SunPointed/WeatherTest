@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">WeatherTest</string>
     <string name="action_settings">Settings</string>
+    <string name="air_condition">空气质量</string>
+    <string name="pm">PM2.5</string>
+    <string name="great">优</string>
+    <string name="good">良</string>
+    <string name="general">中</string>
+    <string name="bad">差</string>
 </resources>
