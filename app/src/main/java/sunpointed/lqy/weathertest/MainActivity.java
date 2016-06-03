@@ -24,6 +24,8 @@ import retrofit.Response;
 import sunpointed.lqy.weathertest.Beans.WeatherDataBean;
 import sunpointed.lqy.weathertest.Beans.WeatherShowBean;
 import sunpointed.lqy.weathertest.Utils.NetUtils;
+import sunpointed.lqy.weathertest.customviews.AirQualityView;
+import sunpointed.lqy.weathertest.customviews.SuggestView;
 import sunpointed.lqy.weathertest.customviews.WeatherShowView;
 import sunpointed.lqy.weathertest.customviews.WeatherView;
 
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     ScrollView mScrollView;
     WeatherShowView mWeatherShowView;
+    AirQualityView mAirQualityView;
+    SuggestView mSuggestView;
 
     WeatherDataBean mBean;
     Gson gson;
@@ -62,6 +66,17 @@ public class MainActivity extends AppCompatActivity {
         mWeatherShowView = (WeatherShowView) findViewById(R.id.wsv);
         mWeatherShowView.setShowList(arrayList);
 
+        mAirQualityView = (AirQualityView) findViewById(R.id.aqv);
+        mAirQualityView.setData(1, 77);
+
+        mSuggestView = (SuggestView) findViewById(R.id.sv);
+        mSuggestView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSuggestView.setData(2, 4, 27, 66, 5, 2, 900);
+            }
+        },2000);
+        
         mWeatherView = (WeatherView) findViewById(R.id.wv);
         mWeatherStyle = 3;
         gson = new Gson();

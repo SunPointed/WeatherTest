@@ -7,32 +7,33 @@ import java.util.List;
  */
 public class WeatherDataBean {
 
+
     /**
-     * lon : 106.55
-     * lat : 29.56
+     * lon : 104.07
+     * lat : 30.67
      */
 
     private CoordBean coord;
     /**
-     * coord : {"lon":106.55,"lat":29.56}
-     * weather : [{"id":701,"main":"Mist","description":"mist","icon":"50n"}]
+     * coord : {"lon":104.07,"lat":30.67}
+     * weather : [{"id":801,"main":"Clouds","description":"few clouds","icon":"02n"}]
      * base : stations
-     * main : {"temp":299.15,"pressure":1002,"humidity":83,"temp_min":299.15,"temp_max":299.15}
-     * visibility : 2800
-     * wind : {"speed":2}
-     * clouds : {"all":90}
-     * dt : 1464699600
-     * sys : {"type":1,"id":7458,"message":0.0141,"country":"CN","sunrise":1464645257,"sunset":1464695348}
-     * id : 1814906
-     * name : Chongqing
+     * main : {"temp":299.15,"pressure":1008,"humidity":69,"temp_min":299.15,"temp_max":299.15}
+     * visibility : 10000
+     * wind : {"speed":0.87,"deg":250.005}
+     * clouds : {"all":20}
+     * dt : 1464966000
+     * sys : {"type":1,"id":7461,"message":0.0111,"country":"CN","sunrise":1464904862,"sunset":1464955392}
+     * id : 1815286
+     * name : Chengdu
      * cod : 200
      */
 
     private String base;
     /**
      * temp : 299.15
-     * pressure : 1002
-     * humidity : 83
+     * pressure : 1008
+     * humidity : 69
      * temp_min : 299.15
      * temp_max : 299.15
      */
@@ -40,23 +41,24 @@ public class WeatherDataBean {
     private MainBean main;
     private int visibility;
     /**
-     * speed : 2
+     * speed : 0.87
+     * deg : 250.005
      */
 
     private WindBean wind;
     /**
-     * all : 90
+     * all : 20
      */
 
     private CloudsBean clouds;
     private int dt;
     /**
      * type : 1
-     * id : 7458
-     * message : 0.0141
+     * id : 7461
+     * message : 0.0111
      * country : CN
-     * sunrise : 1464645257
-     * sunset : 1464695348
+     * sunrise : 1464904862
+     * sunset : 1464955392
      */
 
     private SysBean sys;
@@ -64,10 +66,10 @@ public class WeatherDataBean {
     private String name;
     private int cod;
     /**
-     * id : 701
-     * main : Mist
-     * description : mist
-     * icon : 50n
+     * id : 801
+     * main : Clouds
+     * description : few clouds
+     * icon : 02n
      */
 
     private List<WeatherBean> weather;
@@ -238,14 +240,23 @@ public class WeatherDataBean {
     }
 
     public static class WindBean {
-        private int speed;
+        private double speed;
+        private double deg;
 
-        public int getSpeed() {
+        public double getSpeed() {
             return speed;
         }
 
-        public void setSpeed(int speed) {
+        public void setSpeed(double speed) {
             this.speed = speed;
+        }
+
+        public double getDeg() {
+            return deg;
+        }
+
+        public void setDeg(double deg) {
+            this.deg = deg;
         }
     }
 

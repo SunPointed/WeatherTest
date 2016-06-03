@@ -25,6 +25,7 @@ public class AirQualityView extends View {
     Context mContext;
 
     String mAirCondition;
+    int mCondition;
     int mPM;
 
     int mWidth;
@@ -53,7 +54,7 @@ public class AirQualityView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
         mPath = new Path();
-        mLeaf = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.leaf);
+        mLeaf = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_air_level);
     }
 
     @Override
@@ -71,11 +72,19 @@ public class AirQualityView extends View {
         mWidth = getMeasuredWidth();
         mHeight = getMeasuredHeight();
         mLength = mWidth / 7;
-        mLeaf = BitmapUtils.scaleImageToFixSize(mLeaf, mLength / 4 * 3,mLength / 4 * 3);
+        if(mLength < mHeight) {
+            mLeaf = BitmapUtils.scaleImageToFixSize(mLeaf, mLength, mLength);
+        }else{
+            mLeaf = BitmapUtils.scaleImageToFixSize(mLeaf, mHeight, mHeight);
+        }
     }
 
     private void drawLeft(Canvas canvas) {
-        canvas.drawBitmap(mLeaf, 0, 0, mPaint);
+        if(mLength < mHeight) {
+            canvas.drawBitmap(mLeaf, 0, Math.abs(mHeight - mLength) / 2, mPaint);
+        } else {
+            canvas.drawBitmap(mLeaf, Math.abs(mHeight - mLength) / 2, 0, mPaint);
+        }
     }
 
     private void drawRight(Canvas canvas) {
@@ -90,6 +99,10 @@ public class AirQualityView extends View {
         canvas.drawText(mAirCondition, mLength * 2 + mLength / 2, mHeight / 3, mPaint);
         canvas.drawText(mPM + "", mLength * 4 + mLength / 2, mHeight / 3, mPaint);
 
+        mPath.reset();
+        mPath.moveTo(mLength + mCondition * mLength * 6 / 4 + 10, mHeight / 16 * 9);
+        mPath.lineTo(mLength + mCondition * mLength * 6 / 4, mHeight / 4 * 3);
+        mPath.lineTo(mLength + mCondition * mLength * 6 / 4 + 20, mHeight / 4 * 3);
         canvas.drawPath(mPath, mPaint);
 
         mPaint.setShader(mShader);
@@ -111,11 +124,7 @@ public class AirQualityView extends View {
             return;
         }
 
-        mPath.reset();
-        mPath.moveTo(mLength + airCondition * mLength * 6 / 4 + 10, mHeight / 16 * 9);
-        mPath.lineTo(mLength + airCondition * mLength * 6 / 4, mHeight / 4 * 3);
-        mPath.lineTo(mLength + airCondition * mLength * 6 / 4 + 20, mHeight / 4 * 3);
-
+        mCondition = airCondition;
         mPM = pm;
         postInvalidate();
     }
