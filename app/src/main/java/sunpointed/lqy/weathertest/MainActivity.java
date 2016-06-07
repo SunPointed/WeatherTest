@@ -38,6 +38,7 @@ import sunpointed.lqy.weathertest.Utils.BitmapUtils;
 import sunpointed.lqy.weathertest.Utils.NetUtils;
 import sunpointed.lqy.weathertest.customviews.AirQualityView;
 import sunpointed.lqy.weathertest.customviews.SuggestView;
+import sunpointed.lqy.weathertest.customviews.TitleBar;
 import sunpointed.lqy.weathertest.customviews.WeatherShowView;
 import sunpointed.lqy.weathertest.customviews.WeatherView;
 
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout.LayoutParams mToolParams;
     int mPreToolLeft;
     int mPreToolRight;
+
+    TitleBar mTitleBar;
 
     WeatherView mWeatherView;
     int mWeatherStyle;
@@ -86,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.setNavigationIcon(new BitmapDrawable(mBmpGPS));
         setTitle("成都", "6/5", "星期六");
         setSupportActionBar(mToolbar);
+
+        mTitleBar = (TitleBar) findViewById(R.id.tb);
+        mTitleBar.setCity("成都");
+        mTitleBar.setDate("6/9");
+        mTitleBar.setDay("星期六");
 
         mScrollView = (ScrollView) findViewById(R.id.scroll_view);
         mScrollParams = (RelativeLayout.LayoutParams) mScrollView.getLayoutParams();

@@ -27,11 +27,18 @@
             app:subtitleTextColor="#FFFFFFFF"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+        <sunpointed.lqy.weathertest.customviews.TitleBar
+            android:id="@+id/tb"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#00FFFFFF"/>
+
         <ScrollView
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
+            android:layout_below="@+id/tb"
             android:background="#00FF00FF"
             android:scrollbars="none">
 
