@@ -18,6 +18,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -46,12 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
 //    key: dc4180935056e7aa20b0f4d66efce8a9 name: SunPointed
 
-    Toolbar mToolbar;
-    RelativeLayout.LayoutParams mToolParams;
+    TitleBar mTitleBar;
+    RelativeLayout.LayoutParams mTitleParams;
     int mPreToolLeft;
     int mPreToolRight;
-
-    TitleBar mTitleBar;
 
     WeatherView mWeatherView;
     int mWeatherStyle;
@@ -62,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     float mScrollY;
     int mPreScrollLeft;
     int mPreScrollRight;
-    Bitmap mBmpGPS;
 
     WeatherShowView mWeatherShowView;
     AirQualityView mAirQualityView;
@@ -77,23 +78,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         gson = new Gson();
-        getData();
+//        getData();
 
         setContentView(R.layout.activity_main);
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolParams = (RelativeLayout.LayoutParams) mToolbar.getLayoutParams();
-        mPreToolLeft = mToolParams.leftMargin;
-        mPreToolRight = mToolParams.rightMargin;
-        mBmpGPS = BitmapUtils.scaleImageToFixSize(BitmapFactory.decodeResource(this.getResources(), R.drawable.icon_gps), 180, 240);
-        mToolbar.setNavigationIcon(new BitmapDrawable(mBmpGPS));
-        setTitle("成都", "6/5", "星期六");
-        setSupportActionBar(mToolbar);
 
         mTitleBar = (TitleBar) findViewById(R.id.tb);
         mTitleBar.setCity("成都");
         mTitleBar.setDate("6/9");
         mTitleBar.setDay("星期六");
+        mTitleBar.setMore(new TitleBar.TitleBarSetting() {
+            @Override
+            public void more() {
+                showPopupWindow(mTitleBar);
+            }
+        });
+        mTitleParams = (RelativeLayout.LayoutParams) mTitleBar.getLayoutParams();
 
         mScrollView = (ScrollView) findViewById(R.id.scroll_view);
         mScrollParams = (RelativeLayout.LayoutParams) mScrollView.getLayoutParams();
@@ -115,13 +114,13 @@ public class MainActivity extends AppCompatActivity {
                         if (mScrollX - x > 0) {
                             mScrollParams.rightMargin += mScrollX - x;
                             mScrollParams.leftMargin -= mScrollX - x;
-                            mToolParams.rightMargin += mScrollX - x;
-                            mToolParams.leftMargin -= mScrollX - x;
+                            mTitleParams.rightMargin += mScrollX - x;
+                            mTitleParams.leftMargin -= mScrollX - x;
                         } else {
                             mScrollParams.rightMargin += mScrollX - x;
                             mScrollParams.leftMargin -= mScrollX - x;
-                            mToolParams.rightMargin += mScrollX - x;
-                            mToolParams.leftMargin -= mScrollX - x;
+                            mTitleParams.rightMargin += mScrollX - x;
+                            mTitleParams.leftMargin -= mScrollX - x;
                         }
                         mScrollView.setLayoutParams(mScrollParams);
                     }
@@ -131,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         mScrollParams.rightMargin = mPreScrollRight;
                         mScrollParams.leftMargin = mPreScrollLeft;
-                        mToolParams.rightMargin = mPreToolRight;
-                        mToolParams.leftMargin = mPreScrollLeft;
+                        mTitleParams.rightMargin = mPreToolRight;
+                        mTitleParams.leftMargin = mPreScrollLeft;
                     }
                     mScrollView.setLayoutParams(mScrollParams);
                 }
@@ -169,26 +168,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_more) {
-//            mWeatherStyle = (mWeatherStyle + 1) % 4;
-//            mWeatherView.setWeatherStyle(mWeatherStyle);
-            showPopupWindow(mToolbar);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         mWeatherView.onResume();
@@ -201,8 +180,9 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void setTitle(String city, String date, String day){
-        mToolbar.setTitle(city);
-        mToolbar.setSubtitle(date + " " + day);
+        mTitleBar.setCity(city);
+        mTitleBar.setDate(date);
+        mTitleBar.setDay(day);
     }
 
     private void getData(){
@@ -228,47 +208,52 @@ public class MainActivity extends AppCompatActivity {
 
     private void showPopupWindow(View view) {
 
-        if(!(view instanceof Toolbar)){
+        if(!(view instanceof TitleBar)){
             return;
         }
 
-        Toolbar toolbar = (Toolbar) view;
+        TitleBar titleBar = (TitleBar) view;
 
         View contentView = LayoutInflater.from(this).inflate(
                 R.layout.pop_window, null);
 
         final PopupWindow popupWindow = new PopupWindow(contentView,
-                toolbar.getHeight(), toolbar.getHeight() * 3, true);
+                titleBar.getHeight() / 3 * 2, titleBar.getHeight() * 2, true);
 
-        popupWindow.setAnimationStyle(R.style.pop);
+//        popupWindow.setAnimationStyle(R.style.pop);
 
-        contentView.findViewById(R.id.menu_share).setOnClickListener(new View.OnClickListener() {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.icon_show);
+
+        ImageView share = (ImageView) contentView.findViewById(R.id.menu_share);
+        share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
             }
         });
 
-        contentView.findViewById(R.id.menu_city).setOnClickListener(new View.OnClickListener() {
+        ImageView city = (ImageView) contentView.findViewById(R.id.menu_city);
+        city.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
             }
         });
 
-        contentView.findViewById(R.id.menu_settings).setOnClickListener(new View.OnClickListener() {
+        ImageView setting = (ImageView) contentView.findViewById(R.id.menu_settings);
+        setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
             }
         });
 
-        // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
         popupWindow.setBackgroundDrawable(getResources().getDrawable(
                 R.drawable.kongbai));
 
-        // 设置好参数之后再show
-        popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, view.getWidth() - toolbar.getHeight(), view.getHeight() + toolbar.getHeight() / 2);
-
+        popupWindow.showAtLocation(view, Gravity.NO_GRAVITY, view.getWidth() - titleBar.getHeight(), view.getHeight() + titleBar.getHeight() / 2);
+        share.startAnimation(animation);
+        city.startAnimation(animation);
+        setting.startAnimation(animation);
     }
 }

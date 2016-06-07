@@ -6,8 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import sunpointed.lqy.weathertest.R;
 import sunpointed.lqy.weathertest.Utils.BitmapUtils;
@@ -18,6 +19,8 @@ import sunpointed.lqy.weathertest.Utils.BitmapUtils;
 public class TitleBar extends View {
 
     Context mContext;
+    float mPositionX;
+    TitleBarSetting mSetting;
 
     int mWidth;
     int mHeight;
@@ -58,7 +61,7 @@ public class TitleBar extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mWidth = getMeasuredWidth();
         mHeight = getMeasuredHeight();
-        mLocation = BitmapUtils.scaleImageToFixSize(mLocation, mHeight / 3 * 2, mHeight / 3 * 2);
+        mLocation = BitmapUtils.scaleImageToFixSize(mLocation, mHeight / 2, mHeight / 3 * 2);
         mMore = BitmapUtils.scaleImageToFixSize(mMore, mHeight / 3 * 2, mHeight / 3 * 2);
     }
 
@@ -68,10 +71,25 @@ public class TitleBar extends View {
 
         canvas.drawBitmap(mLocation, mHeight / 6, mHeight / 6, mPaint);
         mPaint.setTextSize(50);
-        canvas.drawText(mCity, mHeight, mHeight / 3 * 2, mPaint);
+        canvas.drawText(mCity, mHeight / 3 * 2, mHeight / 3 * 2, mPaint);
         mPaint.setTextSize(35);
-        canvas.drawText(mDate + "  " + mDay, mHeight * 2, mHeight / 3 * 2, mPaint);
+        canvas.drawText(mDate + "  " + mDay, mHeight + mHeight / 3 * 2, mHeight / 3 * 2, mPaint);
         canvas.drawBitmap(mMore, mWidth - mHeight, mHeight / 6, mPaint);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {
+            mPositionX = event.getX();
+        } else if (action == MotionEvent.ACTION_UP) {
+            if (mPositionX > mWidth - mHeight) {
+                if (mSetting != null) {
+                    mSetting.more();
+                }
+            }
+        }
+        return true;
     }
 
     public void setCity(String city) {
@@ -93,5 +111,13 @@ public class TitleBar extends View {
             mDay = day;
             postInvalidate();
         }
+    }
+
+    public void setMore(TitleBarSetting setting) {
+        mSetting = setting;
+    }
+
+    public interface TitleBarSetting {
+        void more();
     }
 }

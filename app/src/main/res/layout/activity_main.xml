@@ -18,19 +18,9 @@
             app:rain_count="100"
             app:weather="3" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#00FFFFFF"
-            app:titleTextColor="#FFFFFFFF"
-            app:subtitleTextColor="#FFFFFFFF"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
         <sunpointed.lqy.weathertest.customviews.TitleBar
             android:id="@+id/tb"
             android:layout_width="match_parent"
-            android:layout_below="@+id/toolbar"
             android:layout_height="?attr/actionBarSize"
             android:background="#00FFFFFF"/>
 

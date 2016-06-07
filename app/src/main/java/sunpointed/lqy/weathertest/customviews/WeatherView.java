@@ -176,8 +176,8 @@ public class WeatherView extends View implements SensorEventListener {
 
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             if (mWeatherStyle == RAIN) {
-                mRainCenterX -= (int) x;
-                mRainCenterY += (int) y;
+                mRainCenterX -= (int) x * 5;
+                mRainCenterY += (int) y * 5;
             } else if (mWeatherStyle == SUNSHINE) {
                 mSunshineLenthX -= (int) x;
                 if (mSunshineLenthX < -mWidth) {
